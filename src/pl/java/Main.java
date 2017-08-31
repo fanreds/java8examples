@@ -51,5 +51,10 @@ public class Main {
             System.out.println("getInstantlyAvailableDiscount");
             discountService.getInstantlyAvailableDiscount(startTime);
         });
+
+        Util.timeLog(startTime -> {
+            System.out.println("theEitherConstruct");
+            discountService.theEitherConstruct();
+        });
     }
 }

@@ -4,6 +4,7 @@ import static java.util.stream.Collectors.toList;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import pl.java.Util;
@@ -58,5 +59,13 @@ public class DiscountService extends AbstractService {
                 .map(Util::computeCountByPrice)
                 .map(product -> externalService.checkDiscount(product))
                 .collect(toList());
+    }
+
+    public void theEitherConstruct() {
+        Product product = new Product(products.get(0));
+        CompletableFuture<Product> productCompletableFuture = CompletableFuture.supplyAsync(() -> externalService.getPrice(product), executor);
+        CompletableFuture<Product> discountCompletableFuture = CompletableFuture.supplyAsync(() -> externalService.checkDiscount(product), executor).thenApply(Product::new);
+        CompletableFuture<Void> voidCompletableFuture = productCompletableFuture.acceptEitherAsync(discountCompletableFuture, (p1) -> System.out.println(p1.toString()));
+        voidCompletableFuture.join();
     }
 }
