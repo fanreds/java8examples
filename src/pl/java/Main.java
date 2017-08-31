@@ -46,7 +46,10 @@ public class Main {
             List<String> futurePrices = discountService.getCompletableFutureWithThreadPoolPricesWithDiscount();
             System.out.println(futurePrices);
         });
+
+        Util.timeLog(startTime -> {
+            System.out.println("getInstantlyAvailableDiscount");
+            discountService.getInstantlyAvailableDiscount(startTime);
+        });
     }
-
-
 }

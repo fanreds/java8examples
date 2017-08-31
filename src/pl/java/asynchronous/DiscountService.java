@@ -25,11 +25,24 @@ public class DiscountService extends AbstractService {
     }
 
     private Stream<CompletableFuture<String>> getStreamFutureWithExecutorOfPricesWithDiscount() {
+        return getStreamFutureWithExecutorOfPricesWithDiscount(Boolean.FALSE);
+    }
+
+    private Stream<CompletableFuture<String>> getStreamFutureWithExecutorOfPricesWithDiscount(Boolean randomDelayed) {
         List<Product> productList = products.stream().map(Product::new).collect(toList());
         return productList.stream()
                 .map(product -> CompletableFuture.supplyAsync(() -> externalService.getPrice(product), executor))
                 .map(future -> future.thenApply(Util::computeCountByPrice))
-                .map(future -> future.thenCompose(product -> CompletableFuture.supplyAsync(() -> externalService.checkDiscount(product), executor)));
+                .map(future -> future.thenCompose(product -> CompletableFuture.supplyAsync(() -> randomDelayed ? externalService.checkDiscountWithRandomDelayed(product) : externalService.checkDiscount(product), executor)));
+    }
+
+    /**
+     * In this example, you can notice when data will become available, and at what execute time
+     * In this case thenAccept method return CompletableFuture<Void> type, so its necessary to get a array, and wait for completion of all items by join method.
+     */
+    public void getInstantlyAvailableDiscount(long start) {
+        CompletableFuture[] futures = getStreamFutureWithExecutorOfPricesWithDiscount(true).map(f -> f.thenAccept(s -> System.out.println(s + " done in " + (System.currentTimeMillis() - start)))).toArray(CompletableFuture[]::new);
+        CompletableFuture.allOf(futures).join();
     }
 
     /**

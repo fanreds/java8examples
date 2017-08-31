@@ -17,6 +17,15 @@ public class ExternalService {
 
     public String checkDiscount(Product product) {
         Util.delayOneSec();
+        return getDiscountValue(product);
+    }
+
+    public String checkDiscountWithRandomDelayed(Product product) {
+        Util.delayRandom();
+        return getDiscountValue(product);
+    }
+
+    private String getDiscountValue(Product product) {
         if (product.getName().length() > product.getCount()) {
             return String.format(FORMAT, product.getName(), product.getCount(), product.getPrice(), Util.random.nextInt(50));
         }

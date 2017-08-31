@@ -25,9 +25,9 @@ public class Util {
         }
     }
 
-    public static void timeLog(Consumer<Integer> consumer) {
+    public static void timeLog(Consumer<Long> consumer) {
         long startTime = System.currentTimeMillis();
-        consumer.accept(null);
+        consumer.accept(startTime);
         long endTime = System.currentTimeMillis();
         System.out.println("time elapsed is " + (endTime - startTime) + " ms");
     }
